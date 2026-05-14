@@ -1,3 +1,4 @@
+// Package preprocessor serve para preprocessar os datasets e salvar em gob
 package main
 
 import (
@@ -8,7 +9,7 @@ import (
 	"os"
 )
 
-func main() {
+func datasets() {
 	log.Print("test")
 	f, _ := os.ReadFile("processor/references.json")
 	jsonLoaded := json.NewDecoder(bytes.NewReader(f))
