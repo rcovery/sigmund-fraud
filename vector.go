@@ -1,7 +1,9 @@
 package main
 
 import (
-	"math"
+	"encoding/gob"
+	"fmt"
+	"os"
 	"slices"
 	"time"
 )
@@ -40,6 +42,44 @@ func vectorize(body *FraudScoreBody) []float64 {
 	dimensions = append(dimensions, body.Merchant.AvgAmount/MaxMerchantAvgAmount)
 
 	return dimensions
+}
+
+func LoadFromIVF(centroid string) *[]Vector {
+	dName := "preprocess/preprocessed-centroids"
+	dirs, _ := os.ReadDir(dName)
+
+	fName := dirs[0].Name()
+
+	f, _ := os.Open(fmt.Sprintf("%v/%v", dName, fName))
+	defer f.Close()
+
+	vectorArr := []Vector{}
+	dec := gob.NewDecoder(f)
+	dec.Decode(&vectorArr)
+
+	return &vectorArr
+}
+
+// func NearCentroidSearch(centroids []os.DirEntry, centroid string) {
+// 	total := len(centroids)
+// 	minPointer := 0
+// 	maxPointer := total
+// 	pointer := maxPointer / 2
+// }
+
+func GetCentroid(vectors []float64) string {
+	var centroid float64
+	for _, vectorEntry := range vectors {
+		centroid += vectorEntry
+	}
+	centroid /= float64(len(vectors))
+	if centroid < 0 {
+		centroid = 0
+	}
+
+	stringifiedCentroid := fmt.Sprintf("%.3f", centroid)
+
+	return stringifiedCentroid
 }
 
 func GetVecMccRisk(merchantID string) float64 {
@@ -88,15 +128,6 @@ func GetVecKmFromLastTx(lastTx *LastTransaction) float64 {
 	return float64(lastTx.KmFromCurrent) / MaxKm
 }
 
-func EuclideanDistance(myvec []float64, dataset []float64) float64 {
-	var totalDiff float64
-	for idx, dim := range dataset {
-		diff := dim - myvec[idx]
-		totalDiff += math.Pow(diff, 2.0)
-	}
-	return math.Sqrt(totalDiff)
-}
-
 func Clamp(data float64) float64 {
 	if data < 0 {
 		return 0.0
@@ -106,4 +137,9 @@ func Clamp(data float64) float64 {
 	}
 
 	return data
+}
+
+type Vector struct {
+	Vector []float64
+	Label  string
 }
