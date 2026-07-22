@@ -1,6 +1,21 @@
 package main
 
-import "time"
+import (
+	"math"
+	"time"
+)
+
+func KNN() {
+}
+
+func EuclideanDistance(vectors []float64, datasetVectors []float64) float64 {
+	var totalDiff float64
+	for idx, dim := range datasetVectors {
+		diff := dim - vectors[idx]
+		totalDiff += math.Pow(diff, 2.0)
+	}
+	return math.Sqrt(totalDiff)
+}
 
 type Transaction struct {
 	RequestedAt  time.Time `json:"requested_at"`

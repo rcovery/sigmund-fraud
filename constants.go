@@ -10,7 +10,7 @@ var (
 	MaxMerchantAvgAmount float64 = 10000
 )
 
-var MccRisk MccRiskPayload = MccRiskPayload{
+var MccRisk = MccRiskPayload{
 	"5411": 0.15,
 	"5812": 0.30,
 	"5912": 0.20,

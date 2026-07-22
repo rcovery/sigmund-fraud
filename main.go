@@ -40,10 +40,18 @@ func main() {
 			return
 		}
 
-		dimensions := vectorize(&parsedBody)
-		_, writeErr := fmt.Fprintf(w, "%v", dimensions)
+		vectors := vectorize(&parsedBody)
+		_, writeErr := fmt.Fprintf(w, "%v", vectors)
 		if writeErr != nil {
 			log.Fatalln(writeErr)
+		}
+
+		c := GetCentroid(vectors)
+		restoredVectors := LoadFromIVF(c)
+
+		for _, restoredVector := range *restoredVectors {
+			distance := EuclideanDistance(vectors, restoredVector.Vector)
+			log.Printf("Distance: %v", distance)
 		}
 	})
 
